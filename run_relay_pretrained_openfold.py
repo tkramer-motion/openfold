@@ -315,13 +315,13 @@ def main(args):
 
                 feature_dicts[tag] = feature_dict
 
-            processed_feature_dict = feature_processor.process_features(
+            _processed_feature_dict = feature_processor.process_features(
                 feature_dict, mode='predict', is_multimer=is_multimer
             )
 
-            processed_feature_dict = {
+            _processed_feature_dict = {
                 k: torch.as_tensor(v, device=args.model_device)
-                for k, v in processed_feature_dict.items()
+                for k, v in _processed_feature_dict.items()
             }
 
             if args.trace_model:
@@ -330,7 +330,7 @@ def main(args):
                         f"Tracing model at {rounded_seqlen} residues..."
                     )
                     t = time.perf_counter()
-                    trace_model_(model, processed_feature_dict)
+                    trace_model_(model, _processed_feature_dict)
                     tracing_time = time.perf_counter() - t
                     logger.info(
                         f"Tracing time: {tracing_time}"
@@ -339,6 +339,7 @@ def main(args):
 
             unrelaxed_models = []
             for i in range(args.num_predictions_per_model):
+                processed_feature_dict = copy.copy(_processed_feature_dict)
                 numbered_output_name = f"{output_name}_{i + 1}"
                 out = run_model(copy.copy(model), processed_feature_dict, tag, args.output_dir)
 
