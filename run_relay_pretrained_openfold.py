@@ -286,6 +286,7 @@ def main(args):
         args.output_dir)
 
     for model, output_directory in model_generator:
+        model.num_recycle = args.num_recycles
         cur_tracing_interval = 0
         for (tag, tags), seqs in sorted_targets:
             output_name = f'{tag}_{args.config_preset}'
@@ -337,7 +338,6 @@ def main(args):
                             f"Tracing time: {tracing_time}"
                         )
                         cur_tracing_interval = rounded_seqlen
-                model.num_recycle = 9
 
                 out = run_model(model, processed_feature_dict, tag, args.output_dir)
 
@@ -491,6 +491,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--num_predictions_per_model", type=int, default=5,
         help="""The number of predictions per model"""
+    )
+    parser.add_argument(
+        "--num_recycles", type=int, default=3,
+        help="""Number of recycles"""
     )
     add_data_args(parser)
     args = parser.parse_args()
