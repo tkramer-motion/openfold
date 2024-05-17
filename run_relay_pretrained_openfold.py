@@ -283,7 +283,8 @@ def main(args):
         args.model_device,
         args.openfold_checkpoint_path,
         args.jax_param_path,
-        args.output_dir)
+        args.output_dir,
+        args.dropout)
 
     for model, output_directory in model_generator:
         model.num_recycle = args.num_recycles
@@ -500,6 +501,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--no_templates", action="store_true", default=False,
         help="""Skip templates"""
+    )
+    parser.add_argument(
+        "--dropout", action="store_true", default=False,
+        help="Whether to use dropout during inference.",
     )
     add_data_args(parser)
     args = parser.parse_args()

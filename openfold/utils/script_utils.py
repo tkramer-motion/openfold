@@ -6,6 +6,9 @@ import time
 
 import numpy
 import torch
+from pytorch_lightning.utilities.deepspeed import (
+    convert_zero_checkpoint_to_fp32_state_dict
+)
 
 from openfold.model.model import AlphaFold
 from openfold.np import residue_constants, protein
@@ -13,10 +16,6 @@ from openfold.np.relax import relax
 from openfold.utils.import_weights import (
     import_jax_weights_,
     import_openfold_weights_
-)
-
-from pytorch_lightning.utilities.deepspeed import (
-    convert_zero_checkpoint_to_fp32_state_dict
 )
 
 logging.basicConfig()
@@ -35,10 +34,10 @@ def count_models_to_evaluate(openfold_checkpoint_path, jax_param_path):
 
 def get_model_basename(model_path):
     return os.path.splitext(
-                os.path.basename(
-                    os.path.normpath(model_path)
-                )
-            )[0]
+        os.path.basename(
+            os.path.normpath(model_path)
+        )
+    )[0]
 
 
 def make_output_directory(output_dir, model_name, multiple_model_mode):
@@ -50,7 +49,7 @@ def make_output_directory(output_dir, model_name, multiple_model_mode):
     return prediction_dir
 
 
-def load_models_from_command_line(config, model_device, openfold_checkpoint_path, jax_param_path, output_dir):
+def load_models_from_command_line(config, model_device, openfold_checkpoint_path, jax_param_path, output_dir, is_training_bool=False):
     # Create the output directory
 
     multiple_model_mode = count_models_to_evaluate(openfold_checkpoint_path, jax_param_path) > 1
@@ -62,7 +61,10 @@ def load_models_from_command_line(config, model_device, openfold_checkpoint_path
             model_basename = get_model_basename(path)
             model_version = "_".join(model_basename.split("_")[1:])
             model = AlphaFold(config)
-            model = model.eval()
+            if is_training_bool:
+                model.train()
+            else:
+                model = model.eval()
             import_jax_weights_(
                 model, path, version=model_version
             )
@@ -118,9 +120,9 @@ def load_models_from_command_line(config, model_device, openfold_checkpoint_path
 def parse_fasta(data):
     data = re.sub('>$', '', data, flags=re.M)
     lines = [
-        l.replace('\n', '')
-        for prot in data.split('>') for l in prot.strip().split('\n', 1)
-    ][1:]
+                l.replace('\n', '')
+                for prot in data.split('>') for l in prot.strip().split('\n', 1)
+            ][1:]
     tags, seqs = lines[::2], lines[1::2]
 
     tags = [re.split('\W| \|', t)[0] for t in tags]
