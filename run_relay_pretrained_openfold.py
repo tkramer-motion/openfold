@@ -341,7 +341,7 @@ def main(args):
             for i in range(args.num_predictions_per_model):
                 processed_feature_dict = copy.copy(_processed_feature_dict)
                 numbered_output_name = f"{output_name}_{i + 1}"
-                out = run_model(copy.copy(model), processed_feature_dict, tag, args.output_dir)
+                out = run_model(model, processed_feature_dict, tag, args.output_dir)
 
                 # Toss out the recycling dimensions --- we don't need them anymore
                 processed_feature_dict = tensor_tree_map(
