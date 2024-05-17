@@ -287,6 +287,8 @@ def main(args):
 
     for model, output_directory in model_generator:
         model.num_recycle = args.num_recycles
+        model.config.template.enabled = not args.no_templates
+        print(model.config.template)
         cur_tracing_interval = 0
         for (tag, tags), seqs in sorted_targets:
             output_name = f'{tag}_{args.config_preset}'
@@ -495,6 +497,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--num_recycles", type=int, default=3,
         help="""Number of recycles"""
+    )
+    parser.add_argument(
+        "--no_templates", action="store_true", default=False,
+        help="""Skip templates"""
     )
     add_data_args(parser)
     args = parser.parse_args()
