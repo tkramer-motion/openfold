@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import argparse
-import copy
 import json
 import logging
 import math
@@ -314,33 +313,31 @@ def main(args):
                     )
 
                 feature_dicts[tag] = feature_dict
-
-            _processed_feature_dict = feature_processor.process_features(
-                feature_dict, mode='predict', is_multimer=is_multimer
-            )
-
-            _processed_feature_dict = {
-                k: torch.as_tensor(v, device=args.model_device)
-                for k, v in _processed_feature_dict.items()
-            }
-
-            if args.trace_model:
-                if rounded_seqlen > cur_tracing_interval:
-                    logger.info(
-                        f"Tracing model at {rounded_seqlen} residues..."
-                    )
-                    t = time.perf_counter()
-                    trace_model_(model, _processed_feature_dict)
-                    tracing_time = time.perf_counter() - t
-                    logger.info(
-                        f"Tracing time: {tracing_time}"
-                    )
-                    cur_tracing_interval = rounded_seqlen
-
             unrelaxed_models = []
             for i in range(args.num_predictions_per_model):
-                processed_feature_dict = copy.copy(_processed_feature_dict)
                 numbered_output_name = f"{output_name}_{i + 1}"
+                processed_feature_dict = feature_processor.process_features(
+                    feature_dict, mode='predict', is_multimer=is_multimer
+                )
+
+                processed_feature_dict = {
+                    k: torch.as_tensor(v, device=args.model_device)
+                    for k, v in processed_feature_dict.items()
+                }
+
+                if args.trace_model:
+                    if rounded_seqlen > cur_tracing_interval:
+                        logger.info(
+                            f"Tracing model at {rounded_seqlen} residues..."
+                        )
+                        t = time.perf_counter()
+                        trace_model_(model, processed_feature_dict)
+                        tracing_time = time.perf_counter() - t
+                        logger.info(
+                            f"Tracing time: {tracing_time}"
+                        )
+                        cur_tracing_interval = rounded_seqlen
+
                 out = run_model(model, processed_feature_dict, tag, args.output_dir)
 
                 # Toss out the recycling dimensions --- we don't need them anymore
