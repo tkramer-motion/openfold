@@ -387,7 +387,7 @@ def main(args):
                 unrelaxed_models.append((out["ptm_score"], unrelaxed_protein, unrelaxed_output_path))
 
             unrelaxed_models.sort(key=lambda row: row[0], reverse=True)
-            logging.info(f"Got a high confidence score of {unrelaxed_models[0][0]}")
+            logger.info(f"Got a high confidence score of {unrelaxed_models[0][0]}")
 
             if not args.skip_relaxation:
                 # Relax the prediction.
