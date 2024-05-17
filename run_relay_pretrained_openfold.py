@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import argparse
+import copy
 import json
 import logging
 import math
@@ -339,7 +340,7 @@ def main(args):
             unrelaxed_models = []
             for i in range(args.num_predictions_per_model):
                 numbered_output_name = f"{output_name}_{i + 1}"
-                out = run_model(model, processed_feature_dict, tag, args.output_dir)
+                out = run_model(copy.copy(model), processed_feature_dict, tag, args.output_dir)
 
                 # Toss out the recycling dimensions --- we don't need them anymore
                 processed_feature_dict = tensor_tree_map(
@@ -378,7 +379,7 @@ def main(args):
                         output_directory, f'{numbered_output_name}_output_dict.json'
                     )
                     with open(output_dict_path, "w") as fp:
-                        json.dump({"confidence": float(out["ptm_score"])}, fp)
+                        json.dump({"confidence": out["ptm_score"]}, fp)
 
                     logger.info(f"Model output written to {output_dict_path}...")
 
