@@ -17,7 +17,6 @@ import json
 import logging
 import math
 import os
-import pickle
 import random
 import time
 
@@ -376,10 +375,10 @@ def main(args):
 
                 if args.save_outputs:
                     output_dict_path = os.path.join(
-                        output_directory, f'{numbered_output_name}_output_dict.pkl'
+                        output_directory, f'{numbered_output_name}_output_dict.json'
                     )
-                    with open(output_dict_path, "wb") as fp:
-                        pickle.dump(out, fp, protocol=pickle.HIGHEST_PROTOCOL)
+                    with open(output_dict_path, "w") as fp:
+                        json.dump({"confidence": out["ptm_score"]}, fp)
 
                     logger.info(f"Model output written to {output_dict_path}...")
 
