@@ -231,7 +231,7 @@ def prep_output(out, batch, feature_dict, feature_processor, config_preset, mult
 
 def relax_protein(config, model_device, unrelaxed_protein, output_directory, output_name, cif_output=False):
     amber_relaxer = relax.AmberRelaxation(
-        use_gpu=(model_device != "cpu"),
+        use_gpu=False,
         **config.relax,
     )
 
