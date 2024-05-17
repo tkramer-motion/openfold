@@ -337,6 +337,7 @@ def main(args):
                             f"Tracing time: {tracing_time}"
                         )
                         cur_tracing_interval = rounded_seqlen
+                model.num_recycle = 9
 
                 out = run_model(model, processed_feature_dict, tag, args.output_dir)
 
