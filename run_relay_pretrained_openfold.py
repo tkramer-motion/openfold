@@ -379,7 +379,7 @@ def main(args):
                         output_directory, f'{numbered_output_name}_output_dict.json'
                     )
                     with open(output_dict_path, "w") as fp:
-                        json.dump({"confidence": out["ptm_score"]}, fp)
+                        json.dump({"confidence": float(out["ptm_score"])}, fp)
 
                     logger.info(f"Model output written to {output_dict_path}...")
 
