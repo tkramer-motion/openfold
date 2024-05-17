@@ -288,7 +288,6 @@ def main(args):
     for model, output_directory in model_generator:
         model.num_recycle = args.num_recycles
         model.config.template.enabled = not args.no_templates
-        print(model.config.template)
         cur_tracing_interval = 0
         for (tag, tags), seqs in sorted_targets:
             output_name = f'{tag}_{args.config_preset}'
