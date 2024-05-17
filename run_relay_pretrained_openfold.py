@@ -337,7 +337,7 @@ def main(args):
                     cur_tracing_interval = rounded_seqlen
 
             unrelaxed_models = []
-            for i in enumerate(args.num_predictions_per_model):
+            for i in range(args.num_predictions_per_model):
                 numbered_output_name = f"{output_name}_{i + 1}"
                 out = run_model(model, processed_feature_dict, tag, args.output_dir)
 
