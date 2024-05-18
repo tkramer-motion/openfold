@@ -384,6 +384,7 @@ def main(args):
 
                     logger.info(f"Model output written to {output_dict_path}...")
 
+                logger.info(f"Got a confidence score of {out['ptm_score']}")
                 unrelaxed_models.append((out["ptm_score"], unrelaxed_protein, unrelaxed_output_path))
 
             unrelaxed_models.sort(key=lambda row: row[0], reverse=True)
