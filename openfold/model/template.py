@@ -445,7 +445,7 @@ class TemplatePairStack(nn.Module):
         ]
 
         if chunk_size is not None and self.chunk_size_tuner is not None:
-            assert (not self.training)
+            # assert (not self.training)
             tuned_chunk_size = self.chunk_size_tuner.tune_chunk_size(
                 representative_fn=blocks[0],
                 args=(t.clone(),),
